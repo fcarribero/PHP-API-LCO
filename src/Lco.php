@@ -12,16 +12,16 @@ class Lco {
     public function __construct($config) {
         $this->config = array_merge(['use_exceptions' => true], $config);
 
-        if (!isset($this->config['endpoint'])) {
-            throw new Exception('No se ha definido el endpoint de la API');
+        if (!isset($this->config['base_url'])) {
+            throw new Exception('No se ha definido base_url de la API');
         }
 
         if (!isset($this->config['key'])) {
             throw new Exception('No se ha definido la clave de la API');
         }
 
-        if (substr($this->config['endpoint'], -1, 1) != '/') {
-            $this->config['endpoint'] .= '/';
+        if (substr($this->config['base_url'], -1, 1) != '/') {
+            $this->config['base_url'] .= '/';
         }
     }
 
@@ -43,7 +43,7 @@ class Lco {
 
     protected function call($method, $verb = 'GET', $params = null) {
         $verb = strtoupper($verb);
-        $url = $this->config['endpoint'] . $method;
+        $url = $this->config['base_url'] . $method;
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_URL => $url . ($verb == 'GET' && $params ? '?' . http_build_query($params) : ''),

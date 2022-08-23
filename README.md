@@ -13,7 +13,7 @@ $ composer require advans/php-api-lco
 
 ````
 $lco = new \Advans\Api\Lco\Lco([
-    'endpoint' => 'https://ws40.advans.mx/api-lco/',
+    'base_url' => 'https://ws40.advans.mx/api-lco/',
     'key' => '**********************',
     'use_exceptions' => false,
 ]);
@@ -26,6 +26,6 @@ $response = $lco->getBySerial($serial);
 
 | Parámetro | Valor por defecto | Descripción |
 | :--- | :--- | :--- |
-| endpoint | null | URL de la API |
+| base_url | null | URL de la API |
 | key | null | API Key |
 | use_exceptions | true | Define si una respuesta con error dispara un Exception
