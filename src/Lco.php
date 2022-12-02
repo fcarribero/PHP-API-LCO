@@ -7,43 +7,74 @@ use Exception;
 
 class Lco {
 
-    protected $config = [];
+    protected Config $config;
 
-    public function __construct($config) {
-        $this->config = array_merge(['use_exceptions' => true], $config);
-
-        if (!isset($this->config['base_url'])) {
-            throw new Exception('No se ha definido base_url de la API');
-        }
-
-        if (!isset($this->config['key'])) {
-            throw new Exception('No se ha definido la clave de la API');
-        }
-
-        if (substr($this->config['base_url'], -1, 1) != '/') {
-            $this->config['base_url'] .= '/';
-        }
+    /**
+     * @param Config $config
+     */
+    public function __construct(Config $config) {
+        $this->config = $config;
     }
 
+    /**
+     * @return bool|string
+     * @throws LcoException
+     */
     public function status() {
-        return $this->call('status');
+        return trim($this->call('status'));
     }
 
-    public function getBySerial($serial, $fecha = 'now') {
-        return $this->call('v2/lco/by-serial/' . $serial);
+    /**
+     * @param string $serial
+     * @param string $fecha
+     * @return Contribuyente
+     * @throws LcoException
+     */
+    public function getBySerial(string $serial, string $fecha = 'now'): Contribuyente {
+        $result = json_decode($this->call('v2/lco/by-serial/' . $fecha . '/' . $serial), true);
+        return new Contribuyente($result);
     }
 
-    public function getByRFC($rfc, $fecha = 'now') {
-        return $this->call('v2/lco/by-rfc/' . $rfc);
+    /**
+     * @param string $rfc
+     * @param string $fecha
+     * @return Contribuyente[]
+     * @throws LcoException
+     */
+    public function getByRFC(string $rfc, string $fecha = 'now'): array {
+        $result = json_decode($this->call('v2/lco/by-rfc/' . $fecha . '/' . $rfc), true);
+        $contribuyentes = [];
+        foreach ($result as $contribuyente) {
+            $contribuyentes[] = new Contribuyente($contribuyente);
+        }
+        return $contribuyentes;
     }
 
-    public function getHistorial($limit, $offset) {
-        return $this->call('v2/consultar/' . $limit . '/' . $offset);
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @return Historial[]
+     * @throws LcoException
+     */
+    public function getHistorial(int $limit, int $offset = 0): array {
+        $result = json_decode($this->call('v2/historial/' . $limit . '/' . $offset), true);
+        $historial = [];
+        foreach ($result as $dia) {
+            $historial[] = new Historial($dia);
+        }
+        return $historial;
     }
 
+    /**
+     * @param $method
+     * @param string $verb
+     * @param null $params
+     * @return bool|string
+     * @throws LcoException
+     */
     protected function call($method, $verb = 'GET', $params = null) {
         $verb = strtoupper($verb);
-        $url = $this->config['base_url'] . $method;
+        $url = $this->config->base_url . $method;
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_URL => $url . ($verb == 'GET' && $params ? '?' . http_build_query($params) : ''),
@@ -51,18 +82,17 @@ class Lco {
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => $verb,
             CURLOPT_POSTFIELDS => $verb == 'POST' && $params ? json_encode($params) : null,
-            CURLOPT_XOAUTH2_BEARER => $this->config['key'],
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $this->config->key
+            ]
         ]);
         $result = curl_exec($curl);
         $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if ($http_code != 200 || $result === false) {
-            if ($this->config['use_exceptions']) {
-                throw new Exception('Error de conexión con la LCO');
-            } else {
-                return false;
-            }
+            throw new LcoException('Error de conexión con la LCO', $http_code);
         }
-        return @json_decode($result);
+        return $result;
     }
 }
