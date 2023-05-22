@@ -13,7 +13,7 @@ $ composer require advans/php-api-lco
 
 ````
 $lco = new \Advans\Api\Lco\Lco([
-    'base_url' => 'https://ws40.advans.mx/api-lco/',
+    'base_url' => '**********************',
     'key' => '**********************',
     'use_exceptions' => false,
 ]);
