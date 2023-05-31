@@ -56,13 +56,27 @@ class Lco {
      * @return Historial[]
      * @throws LcoException
      */
-    public function getHistorial(int $limit, int $offset = 0): array {
+    public function getHistorial(int $limit, int $offset = 0): array{
         $result = json_decode($this->call('v2/historial/' . $limit . '/' . $offset), true);
         $historial = [];
         foreach ($result as $dia) {
             $historial[] = new Historial($dia);
         }
         return $historial;
+    }
+
+    /**
+     * @throws LcoException
+     */
+    public function getCertificadoBySerial(string $serial): string {
+        return $this->call('v2/certificado/by-serial/' . $serial);
+    }
+
+    /**
+     * @throws LcoException
+     */
+    public function getCertificadoDetailsBySerial(string $serial): array {
+        return json_decode($this->call('v2/certificado/details/by-serial/' . $serial), true);
     }
 
     /**

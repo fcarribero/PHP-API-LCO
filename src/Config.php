@@ -5,8 +5,12 @@ namespace Advans\Api\Lco;
 use Exception;
 
 class Config {
+
     public $base_url, $key;
 
+    /**
+     * @throws Exception
+     */
     public function __construct($args) {
         $this->base_url = $args['base_url'] ?? null;
         if (!$this->base_url) {
