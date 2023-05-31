@@ -11,21 +11,21 @@ $ composer require advans/php-api-lco
 
 ## Ejemplo
 
-````
-$lco = new \Advans\Api\Lco\Lco([
+````PHP
+$lco_config = new \Advans\Api\Lco\Config([
     'base_url' => '**********************',
     'key' => '**********************',
-    'use_exceptions' => false,
 ]);
+$lco_service = new \Advans\Api\Lco\Lco($lco_config);
 
 $serial = '00001000000514412260';
-$response = $lco->getBySerial($serial);
+$response = $lco_service->getBySerial($serial);
 ````
 
 ## Configuración
 
-| Parámetro | Valor por defecto | Descripción |
-| :--- | :--- | :--- |
-| base_url | null | URL de la API |
-| key | null | API Key |
-| use_exceptions | true | Define si una respuesta con error dispara un Exception
+| Parámetro      | Valor por defecto | Descripción                                            |
+|:---------------|:------------------|:-------------------------------------------------------|
+| base_url       | null              | URL de la API                                          |
+| key            | null              | API Key                                                |
+| use_exceptions | true              | Define si una respuesta con error dispara un Exception |
