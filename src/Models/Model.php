@@ -2,17 +2,7 @@
 
 namespace Advans\Api\Lco;
 
-use DateTime;
-
-/**
- * Class Historial
- * @package Advans\Api\Lco
- * @property DateTime $fecha
- * @property string $cantidad_rfcs
- * @property string $cantidad_certificados
- * @property DateTime $created_at
- */
-class Historial {
+class Model {
 
     protected array $attributes;
 
@@ -26,14 +16,6 @@ class Historial {
 
     public function toJson() {
         return json_encode($this->attributes);
-    }
-
-    protected function getFecha() {
-        return new DateTime($this->attributes['fecha']);
-    }
-
-    protected function getCreatedAt() {
-        return new DateTime($this->attributes['created_at']);
     }
 
     public function __get($name) {

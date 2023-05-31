@@ -56,7 +56,7 @@ class Lco {
      * @return Historial[]
      * @throws LcoException
      */
-    public function getHistorial(int $limit, int $offset = 0): array {
+    public function getHistorial(int $limit, int $offset = 0): array{
         $result = json_decode($this->call('v2/historial/' . $limit . '/' . $offset), true);
         $historial = [];
         foreach ($result as $dia) {
