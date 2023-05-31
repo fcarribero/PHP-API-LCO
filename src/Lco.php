@@ -66,6 +66,20 @@ class Lco {
     }
 
     /**
+     * @throws LcoException
+     */
+    public function getCertificadoBySerial(string $serial): string {
+        return $this->call('v2/certificado/by-serial/' . $serial);
+    }
+
+    /**
+     * @throws LcoException
+     */
+    public function getCertificadoDetailsBySerial(string $serial): array {
+        return json_decode($this->call('v2/certificado/details/by-serial/' . $serial), true);
+    }
+
+    /**
      * @param $method
      * @param string $verb
      * @param null $params
