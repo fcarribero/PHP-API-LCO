@@ -1,19 +1,20 @@
 {
-    "name": "advans/php-api-lco",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Francisco Carribero",
-            "email": "francisco.carribero@webneex.com"
-        }
-    ],
-    "require": {
-        "ext-curl": "*",
-        "ext-json": "*"
-    },
-    "autoload": {
-        "classmap": [
-            "src/"
-        ]
+  "name": "advans/php-api-lco",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Francisco Carribero",
+      "email": "francisco.carribero@webneex.com"
     }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  }
 }
