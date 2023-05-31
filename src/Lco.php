@@ -72,7 +72,7 @@ class Lco {
      * @return bool|string
      * @throws LcoException
      */
-    protected function call($method, $verb = 'GET', $params = null) {
+    protected function call($method, string $verb = 'GET', $params = null) {
         $verb = strtoupper($verb);
         $url = $this->config->base_url . $method;
         $curl = curl_init();
