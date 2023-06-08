@@ -23,12 +23,12 @@ class Model {
             return null;
         }
 
-        $name = str_replace('_', ' ', $name);
-        $name = ucwords($name);
-        $name = str_replace(' ', '', $name);
-        $name = lcfirst($name);
+        $method_name = str_replace('_', ' ', $name);
+        $method_name = ucwords($method_name);
+        $method_name = str_replace(' ', '', $method_name);
+        $method_name = lcfirst($method_name);
+        $method_name = 'get' . $method_name;
 
-        $method_name = 'get' . $name;
         if (method_exists($this, $method_name)) {
             return $this->$method_name();
         }
