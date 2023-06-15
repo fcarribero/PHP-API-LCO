@@ -27,11 +27,18 @@ class Lco {
     /**
      * @param string $serial
      * @param string $fecha
-     * @return Contribuyente
+     * @return Contribuyente|null
      * @throws LcoException
      */
-    public function getBySerial(string $serial, string $fecha = 'now'): Contribuyente {
-        $result = json_decode($this->call('v2/lco/by-serial/' . $fecha . '/' . $serial), true);
+    public function getBySerial(string $serial, string $fecha = 'now'): ?Contribuyente {
+        try {
+            $result = json_decode($this->call('v2/lco/by-serial/' . $fecha . '/' . $serial), true);
+        } catch (Exception $e) {
+            if ($e->getCode() == 404) {
+                return null;
+            }
+            throw $e;
+        }
         return new Contribuyente($result);
     }
 
@@ -42,7 +49,14 @@ class Lco {
      * @throws LcoException
      */
     public function getByRFC(string $rfc, string $fecha = 'now'): array {
-        $result = json_decode($this->call('v2/lco/by-rfc/' . $fecha . '/' . $rfc), true);
+        try {
+            $result = json_decode($this->call('v2/lco/by-rfc/' . $fecha . '/' . $rfc), true);
+        } catch (Exception $e) {
+            if ($e->getCode() == 404) {
+                return [];
+            }
+            throw $e;
+        }
         $contribuyentes = [];
         foreach ($result as $contribuyente) {
             $contribuyentes[] = new Contribuyente($contribuyente);
@@ -56,7 +70,7 @@ class Lco {
      * @return Historial[]
      * @throws LcoException
      */
-    public function getHistorial(int $limit, int $offset = 0): array{
+    public function getHistorial(int $limit, int $offset = 0): array {
         $result = json_decode($this->call('v2/historial/' . $limit . '/' . $offset), true);
         $historial = [];
         foreach ($result as $dia) {
@@ -68,15 +82,29 @@ class Lco {
     /**
      * @throws LcoException
      */
-    public function getCertificadoBySerial(string $serial): string {
-        return $this->call('v2/certificado/by-serial/' . $serial);
+    public function getCertificadoBySerial(string $serial): ?string {
+        try {
+            return $this->call('v2/certificado/by-serial/' . $serial);
+        } catch (Exception $e) {
+            if ($e->getCode() == 404) {
+                return null;
+            }
+            throw $e;
+        }
     }
 
     /**
      * @throws LcoException
      */
     public function getCertificadoDetailsBySerial(string $serial): array {
-        return json_decode($this->call('v2/certificado/details/by-serial/' . $serial), true);
+        try {
+            return json_decode($this->call('v2/certificado/details/by-serial/' . $serial), true);
+        } catch (Exception $e) {
+            if ($e->getCode() == 404) {
+                return [];
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -105,7 +133,7 @@ class Lco {
         $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if ($http_code != 200 || $result === false) {
-            throw new LcoException('Error de conexión con la LCO', $http_code);
+            throw new LcoException('Servicio LCO respondió con el código ' . $http_code, $http_code);
         }
         return $result;
     }
